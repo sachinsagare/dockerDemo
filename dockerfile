@@ -2,7 +2,7 @@
 
 FROM java:8
 EXPOSE 8080
-ADD /target/dockerdemo.jar dockerdemo.jar
+ADD /target/dockerDemo.jar dockerDemo.jar
 ENTRYPOINT ["java","-jar","dockerDemo.jar"]
 
 # maintainer
