@@ -1,4 +1,23 @@
-FROM openjdk:8-jdk-alpine
-ARG JAR_FILE=target/*.jar dockerDemo
-ENTRYPOINT ["java","-jar","/app.jar"]
-EXPOSE 8080
+# pull base image.
+FROM java:8
+
+# maintainer
+MAINTAINER "sachin.sagare@gmail.com"
+
+# update packages and install maven
+RUN  \
+  export DEBIAN_FRONTEND=noninteractive && \
+  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
+  apt-get update && \
+  apt-get -y upgrade && \
+  apt-get install -y vim wget curl maven
+
+# attach volumes
+VOLUME /vol/development
+
+# create working directory
+RUN mkdir -p /vol/development
+WORKDIR /vol/development
+
+# maven exec
+CMD ["mvn", "clean", "package", "exec:java"]

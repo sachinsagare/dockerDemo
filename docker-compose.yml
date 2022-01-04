@@ -1,24 +1,34 @@
 version: '3'
 services:
-  myspringapp:
-    image: dockerDemo
-    build: .
-    ports:
+  
+  springappserver:
+    build:
+      context: . 
+      dockerfile: dockerfile
+    ports: 
       - "8080:8080"
-    restart: always
+    networks:
+      - net-spring-db
+    volumes:
+      - .:/vol/development
     depends_on:
-      - mypostgres
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://mypostgres:5432/mydb
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=create
-  mypostgres:
-    image: postgres
-    restart: always
+      - mysqldbserver
+  
+  mysqldbserver:
+    build:
+      context: . 
+      dockerfile: mysqldb.dockerfile
     ports:
-     - "5432:5432"
+      - "3306:3306"
+    networks:
+      - net-spring-db
     environment:
-     - POSTGRES_PASSWORD=password
-     - POSTGRES_USER=postgres
-     - POSTGRES_DB=mydb
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+      MYSQL_ROOT_PASSWORD: myrootpassword
+    container_name: mysqldbserver
+
+networks:
+  net-spring-db:
+    driver: bridge
